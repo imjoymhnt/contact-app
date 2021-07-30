@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Table, Radio, Divider } from "antd";
+import { Table, Radio, Divider, Button } from "antd";
 import axios from "axios";
 import AddUser from "./AddUser";
-import DeleteUser from "./DeleteUser";
 
 const contentStyle = {
   minHeight: 280,
@@ -12,6 +11,10 @@ const contentStyle = {
 
 const UserTable = () => {
   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+    },
     {
       title: "Name",
       dataIndex: "name",
@@ -28,6 +31,20 @@ const UserTable = () => {
     {
       title: "Hobbbies",
       dataIndex: "hobbies",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      render: (text) => (
+        <div>
+          <Button style={{ marginRight: 5 }} primary>
+            Update
+          </Button>
+          <Button onClick={handleDelete} danger>
+            Delete
+          </Button>
+        </div>
+      ),
     },
   ];
 
@@ -50,6 +67,7 @@ const UserTable = () => {
   users.map((user) => {
     tableData.push({
       key: user._id,
+      id: user._id,
       name: user.name,
       email: user.email,
       phone: user.phone,
@@ -76,24 +94,17 @@ const UserTable = () => {
       name: record.name,
     }),
   };
-
-  console.log(seleted);
+  const handleDelete = async (e) => {
+    const { data } = await axios
+      .delete(`${process.env.REACT_APP_API}/api/v1/user/${seleted[0]}`)
+      .then(window.location.reload());
+  };
 
   const [selectionType, setSelectionType] = useState("checkbox");
   return (
     <div style={contentStyle}>
-      {/* <Radio.Group
-        onChange={({ target: { value } }) => {
-          setSelectionType(value);
-        }}
-        value={selectionType}
-      >
-        <Radio value="checkbox">Checkbox</Radio>
-       
-      </Radio.Group> */}
       <span>
         <AddUser />
-        <DeleteUser id={seleted[0]} />
       </span>
 
       <Divider />
@@ -105,6 +116,9 @@ const UserTable = () => {
         }}
         columns={columns}
         dataSource={tableData ? tableData : []}
+        onRow={(r) => ({
+          onClick: () => console.log(r),
+        })}
       />
     </div>
   );
