@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Table, Radio, Divider, Button } from "antd";
+import { Table, Radio, Divider, Button, Modal, Form, Input } from "antd";
 import axios from "axios";
 import AddUser from "./AddUser";
+var _ = require("lodash");
 
 const contentStyle = {
   minHeight: 280,
@@ -33,11 +34,15 @@ const UserTable = () => {
       dataIndex: "hobbies",
     },
     {
-      title: "Name",
-      dataIndex: "name",
+      title: "Actions",
+      dataIndex: "actions",
       render: (text) => (
         <div>
-          <Button style={{ marginRight: 5 }} primary>
+          <Button
+            onClick={showModal}
+            style={{ marginRight: 5, marginBottom: 5 }}
+            primary
+          >
             Update
           </Button>
           <Button onClick={handleDelete} danger>
@@ -78,10 +83,12 @@ const UserTable = () => {
   console.log(tableData);
 
   const [seleted, setSelected] = useState("");
+  const [seletedRows, setSelectedRows] = useState("");
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setSelected(selectedRowKeys);
+      setSelectedRows(selectedRows);
       console.log(
         `selectedRowKeys: ${selectedRowKeys}`,
         "selectedRows: ",
@@ -100,11 +107,72 @@ const UserTable = () => {
       .then(window.location.reload());
   };
 
+  // const handleUpdate = async (e) => {
+  //   const { data } = await axios
+  //     .put(`${process.env.REACT_APP_API}/api/v1/user/${seleted[0]}`)
+  //     .then(window.location.reload());
+  // };
+
   const [selectionType, setSelectionType] = useState("checkbox");
+
+  // Update User
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [form] = Form.useForm();
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  const onFinish = async (values) => {
+    console.log("Success:", values);
+    const { data } = await axios.put(
+      `${process.env.REACT_APP_API}/api/v1/user/${seleted[0]}`,
+      values
+    );
+    setIsModalVisible(false);
+    window.location.reload();
+  };
+
+  // Send Email Function
+  const sendEmail = () => {
+    const items = seletedRows
+      .map(function (element) {
+        return `
+        ID ${element.id}
+        Name ${element.name}
+        Phone: $${element.phone}
+        Email: ${element.email}
+        Hobbies: ${element.hobbies}
+        `;
+      })
+      .join("\n");
+
+    const body = `${items}`;
+
+    window.location.href =
+      "mailto:info@redpositive.in?subject=User Details&body=" +
+      encodeURIComponent(body);
+  };
+
   return (
     <div style={contentStyle}>
       <span>
         <AddUser />
+        <br />
+        <Button
+          style={{ marginLeft: "86%", marginTop: 5 }}
+          type="primary"
+          onClick={sendEmail}
+        >
+          Send To Email
+        </Button>
       </span>
 
       <Divider />
@@ -120,6 +188,83 @@ const UserTable = () => {
           onClick: () => console.log(r),
         })}
       />
+
+      {/* Update User  */}
+      {/* <Button style={{ marginLeft: "88%" }} type="primary" onClick={showModal}>
+        Update User
+      </Button> */}
+      <Modal
+        visible={isModalVisible}
+        onOk={form.submit}
+        onCancel={handleCancel}
+      >
+        <Form
+          form={form}
+          onFinish={onFinish}
+          labelCol={{
+            span: 8,
+          }}
+          wrapperCol={{
+            span: 16,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+        >
+          <Form.Item
+            label="Username"
+            name="name"
+            value={seletedRows.length !== 0 && seletedRows[0].name}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input your username!",
+            //   },
+            // ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Phone Number"
+            name="phone"
+            value={seletedRows.length !== 0 && seletedRows[0].phone}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input your Phone Number!",
+            //   },
+            // ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Email"
+            name="email"
+            value={seletedRows.length !== 0 && seletedRows[0].email}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input your Email!",
+            //   },
+            // ]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Hobbies"
+            name="hobbies"
+            value={seletedRows.length !== 0 && seletedRows[0].hobbies}
+            // rules={[
+            //   {
+            //     required: true,
+            //     message: "Please input your Hobbies!",
+            //   },
+            // ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
