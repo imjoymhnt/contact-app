@@ -159,13 +159,19 @@ const UserTable = () => {
       <span>
         <AddUser />
         <br />
-        <Button
-          style={{ marginLeft: "86%", marginTop: 5 }}
-          type="primary"
-          onClick={sendEmail}
-        >
-          Send To Email
-        </Button>
+        {seletedRows ? (
+          <Button
+            style={{ marginLeft: "86%", marginTop: 5 }}
+            type="primary"
+            onClick={sendEmail}
+          >
+            Send To Email
+          </Button>
+        ) : (
+          <Button style={{ marginLeft: "86%", marginTop: 5 }} disabled>
+            Send To Email
+          </Button>
+        )}
       </span>
 
       <Divider />
