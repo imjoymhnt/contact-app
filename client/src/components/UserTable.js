@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Table, Radio, Divider, Button, Modal, Form, Input } from "antd";
 import axios from "axios";
 import AddUser from "./AddUser";
-var _ = require("lodash");
 
 const contentStyle = {
   minHeight: 280,
@@ -107,12 +106,6 @@ const UserTable = () => {
       .then(window.location.reload());
   };
 
-  // const handleUpdate = async (e) => {
-  //   const { data } = await axios
-  //     .put(`${process.env.REACT_APP_API}/api/v1/user/${seleted[0]}`)
-  //     .then(window.location.reload());
-  // };
-
   const [selectionType, setSelectionType] = useState("checkbox");
 
   // Update User
@@ -189,10 +182,6 @@ const UserTable = () => {
         })}
       />
 
-      {/* Update User  */}
-      {/* <Button style={{ marginLeft: "88%" }} type="primary" onClick={showModal}>
-        Update User
-      </Button> */}
       <Modal
         visible={isModalVisible}
         onOk={form.submit}
@@ -215,12 +204,6 @@ const UserTable = () => {
             label="Username"
             name="name"
             value={seletedRows.length !== 0 && seletedRows[0].name}
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your username!",
-            //   },
-            // ]}
           >
             <Input />
           </Form.Item>
@@ -228,12 +211,6 @@ const UserTable = () => {
             label="Phone Number"
             name="phone"
             value={seletedRows.length !== 0 && seletedRows[0].phone}
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your Phone Number!",
-            //   },
-            // ]}
           >
             <Input />
           </Form.Item>
@@ -241,12 +218,6 @@ const UserTable = () => {
             label="Email"
             name="email"
             value={seletedRows.length !== 0 && seletedRows[0].email}
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your Email!",
-            //   },
-            // ]}
           >
             <Input />
           </Form.Item>
@@ -254,12 +225,6 @@ const UserTable = () => {
             label="Hobbies"
             name="hobbies"
             value={seletedRows.length !== 0 && seletedRows[0].hobbies}
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input your Hobbies!",
-            //   },
-            // ]}
           >
             <Input />
           </Form.Item>
