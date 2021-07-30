@@ -56,15 +56,15 @@ exports.updateUser = async (req, res) => {
   });
 };
 
+// change this
 exports.deleteUser = async (req, res) => {
-  const user = await User.findByIdAndDelete(req.params.id);
-
-  if (!user) {
-    return res.status(400).json({
-      msg: "No user found",
-    });
-  }
-  res.status(200).json({
-    msg: "User deleted successfully",
+  const user = await User.findByIdAndDelete(req.params.id).exec((err, data) => {
+    if (err) {
+      return res.status(400).json({
+        msg: "Can't delete user",
+      });
+    } else {
+      res.status(200).json({ msg: "Deleted Successfully" });
+    }
   });
 };
